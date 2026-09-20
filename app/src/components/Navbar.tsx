@@ -7,9 +7,26 @@ const Navbar = () => {
 
   return (
     <div className="w-full flex justify-center pt-6">
+      <style>{`
+        @keyframes wipeReveal {
+          0% {
+            clip-path: inset(0 100% 0 0);
+          }
+          100% {
+            clip-path: inset(0 0% 0 0);
+          }
+        }
+        .menu-item-anim {
+          animation-name: wipeReveal;
+          animation-duration: 0.5s;
+          animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+          animation-fill-mode: both;
+        }
+      `}</style>
+
       <div
         className={`bg-[#151515] text-white rounded-[28px] w-[820px] max-w-[92vw] overflow-hidden transition-[height] duration-300 ease-out ${
-          open ? "h-[280px]" : "h-[60px]"
+          open ? "h-[300px]" : "h-[60px]"
         }`}
       >
         {/* Top row */}
@@ -30,17 +47,21 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Expandable menu */}
+        {/* Expandable menu — key forces remount so the animation replays every open */}
         <nav
-          className={`flex flex-col gap-3 px-3 pb-3 transition-opacity duration-300 ${
+          key={open ? "open" : "closed"}
+          className={`flex flex-col gap-3 px-3 pb-3 transition-opacity duration-200 ${
             open ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          {menuItems.map((item) => (
+          {menuItems.map((item, i) => (
             <button
               key={item}
               onClick={() => setOpen(false)}
-              className="bg-[#F5F1EA] text-[#151515] text-left text-[15px] font-medium rounded-2xl px-5 py-3 hover:bg-white transition-colors"
+              style={open ? { animationDelay: `${i * 150}ms` } : undefined}
+              className={`bg-[#F5F1EA] text-[#151515] text-left text-[15px] font-medium rounded-2xl px-5 py-3 hover:bg-white transition-colors ${
+                open ? "menu-item-anim" : ""
+              }`}
             >
               {item}
             </button>
