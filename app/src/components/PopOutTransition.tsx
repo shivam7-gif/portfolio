@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import XPBootScreen from "./XPBootScreen";
-import XPDesktop from "./XPDesktop";
+import { useNavigate } from "react-router-dom";
 
 interface PopOutTransitionProps {
   children: React.ReactNode;
+  to?: string;
   className?: string;
 }
 
@@ -14,12 +14,11 @@ interface Rect {
   height: number;
 }
 
-type Phase = "idle" | "expanding" | "expanded" | "booting" | "desktop";
-
-const PopOutTransition = ({ children, className = "" }: PopOutTransitionProps) => {
+const PopOutTransition = ({ children, to = "/window", className = "" }: PopOutTransitionProps) => {
   const triggerRef = useRef<HTMLDivElement>(null);
-  const [phase, setPhase] = useState<Phase>("idle");
+  const [phase, setPhase] = useState<"idle" | "expanding" | "expanded">("idle");
   const [rect, setRect] = useState<Rect | null>(null);
+  const navigate = useNavigate();
 
   const handleClick = () => {
     const el = triggerRef.current;
@@ -29,19 +28,14 @@ const PopOutTransition = ({ children, className = "" }: PopOutTransitionProps) =
     setRect({ top: bounds.top, left: bounds.left, width: bounds.width, height: bounds.height });
     setPhase("expanding");
 
-    // mount at the origin rect first, then expand to fullscreen on the next frame
+    // Mount at the origin rect first, then expand to fullscreen on the next animation frame
     requestAnimationFrame(() => {
       requestAnimationFrame(() => setPhase("expanded"));
     });
   };
 
-  const handleClose = () => {
-    setPhase("idle");
-    setRect(null);
-  };
-
   const isTransitioning = phase !== "idle";
-  const isFullscreen = phase === "expanded" || phase === "booting" || phase === "desktop";
+  const isFullscreen = phase === "expanded";
 
   return (
     <>
@@ -59,15 +53,14 @@ const PopOutTransition = ({ children, className = "" }: PopOutTransitionProps) =
             height: isFullscreen ? "100vh" : rect.height,
             borderRadius: isFullscreen ? 0 : 24,
             transition:
-              "top 0.6s cubic-bezier(0.65,0,0.35,1), left 0.6s cubic-bezier(0.65,0,0.35,1), width 0.6s cubic-bezier(0.65,0,0.35,1), height 0.6s cubic-bezier(0.65,0,0.35,1), border-radius 0.6s cubic-bezier(0.65,0,0.35,1)",
+              "top 0.5s cubic-bezier(0.65,0,0.35,1), left 0.5s cubic-bezier(0.65,0,0.35,1), width 0.5s cubic-bezier(0.65,0,0.35,1), height 0.5s cubic-bezier(0.65,0,0.35,1), border-radius 0.5s cubic-bezier(0.65,0,0.35,1)",
           }}
           onTransitionEnd={() => {
-            if (phase === "expanded") setPhase("booting");
+            if (phase === "expanded") {
+              navigate(to);
+            }
           }}
-        >
-          {phase === "booting" && <XPBootScreen onDone={() => setPhase("desktop")} />}
-          {phase === "desktop" && <XPDesktop onClose={handleClose} />}
-        </div>
+        />
       )}
     </>
   );
