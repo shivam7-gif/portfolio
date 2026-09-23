@@ -1,5 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 
+// Real icons from assets
+import githubIcon from "../assets/icons/Github.png";
+import searchGlassIcon from "../assets/icons/Google_Search_glass.png";
+import lockSslIcon from "../assets/icons/Lock_ssl.png";
+import portfolioIcon from "../assets/icons/Portfolio.png";
+import youtubeIcon from "../assets/icons/youtube_logo.png";
+import reactIcon from "../assets/react.svg";
+
 export const CHROME_ICON = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="23" fill="%23ffffff"/><path fill="%23EA4335" d="M24 5c6.5 0 12.3 3.3 15.7 8.3L26.3 24H12.2C13.5 12.8 24 5 24 5z"/><path fill="%2334A853" d="M24 43c-6.8 0-12.7-3.6-16-9.1l13.4-10.7 7.1 12.3C26.9 42.4 25.5 43 24 43z"/><path fill="%23FBBC05" d="M43 24c0 7.5-4.2 13.9-10.4 17.2l-7.1-12.3 14.1-1.2C41.8 26.5 43 24 43 24z"/><circle cx="24" cy="24" r="9.5" fill="%23ffffff"/><circle cx="24" cy="24" r="7.5" fill="%231a73e8"/></svg>`;
 
 interface ChromeTab {
@@ -13,7 +21,8 @@ interface ChromeTab {
 interface Bookmark {
   title: string;
   url: string;
-  icon?: string;
+  iconImg?: string;
+  iconSvg?: React.ReactNode;
 }
 
 export interface YouTubeVideo {
@@ -30,7 +39,7 @@ export interface YouTubeVideo {
 export const youtubeVideos: YouTubeVideo[] = [
   {
     id: "jfKfPfyJRdk",
-    title: "lofi hip hop radio 📚 - beats to relax/study to",
+    title: "lofi hip hop radio - beats to relax/study to",
     channel: "Lofi Girl",
     views: "89M views",
     timeAgo: "Live now",
@@ -40,7 +49,7 @@ export const youtubeVideos: YouTubeVideo[] = [
   },
   {
     id: "5qap5aO4i9A",
-    title: "synthwave radio 🌌 - chill electronic beats to chill/game to",
+    title: "synthwave radio - chill electronic beats to chill/game to",
     channel: "Lofi Girl",
     views: "18M views",
     timeAgo: "Live now",
@@ -96,7 +105,7 @@ export const youtubeVideos: YouTubeVideo[] = [
     timeAgo: "14 years ago",
     duration: "3:32",
     category: "Music",
-    description: "The official video for “Never Gonna Give You Up” by Rick Astley.",
+    description: "The official video for Never Gonna Give You Up by Rick Astley.",
   },
   {
     id: "7S_tz1z_5bA",
@@ -111,12 +120,20 @@ export const youtubeVideos: YouTubeVideo[] = [
 ];
 
 const defaultBookmarks: Bookmark[] = [
-  { title: "Google", url: "https://www.google.com", icon: "🔍" },
-  { title: "YouTube", url: "https://www.youtube.com", icon: "▶️" },
-  { title: "GitHub", url: "https://github.com/shivam7-gif", icon: "🐙" },
-  { title: "Wikipedia", url: "https://en.m.wikipedia.org", icon: "📖" },
-  { title: "Portfolio", url: "https://shivam-portfolio.local", icon: "💻" },
-  { title: "React Docs", url: "https://react.dev", icon: "⚛️" },
+  { title: "Google", url: "https://www.google.com", iconImg: searchGlassIcon },
+  { title: "YouTube", url: "https://www.youtube.com", iconImg: youtubeIcon },
+  { title: "GitHub", url: "https://github.com/shivam7-gif", iconImg: githubIcon },
+  {
+    title: "Wikipedia",
+    url: "https://en.m.wikipedia.org",
+    iconSvg: (
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.09 13.06L8.85 3H6.01L1.24 16.58h2.38l1.32-3.79h4.63l.79 3.79h2.37l-3.23-7.52 3.03-7.06h-2.38l-2.06 4.06zm-4.14 1.76l1.65-4.73 1.07 4.73H7.95zm14.81-11.82h-2.73l-3.71 10.3-3.69-10.3h-2.61l4.89 13.58h2.95l4.89-13.58z" />
+      </svg>
+    ),
+  },
+  { title: "Portfolio", url: "https://shivam-portfolio.local", iconImg: portfolioIcon },
+  { title: "React Docs", url: "https://react.dev", iconImg: reactIcon },
 ];
 
 export default function ChromeBrowser() {
@@ -154,7 +171,6 @@ export default function ChromeBrowser() {
   const tabCounter = useRef(2);
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
 
-  // Sync address bar input with active tab URL
   useEffect(() => {
     if (activeTab) {
       setInputUrl(activeTab.url);
@@ -166,7 +182,6 @@ export default function ChromeBrowser() {
 
     let destination = target.trim();
 
-    // Friendly shortcuts
     if (destination.toLowerCase() === "youtube" || destination.toLowerCase() === "yt") {
       destination = "https://www.youtube.com";
     } else if (destination.toLowerCase() === "google") {
@@ -333,7 +348,15 @@ export default function ChromeBrowser() {
     } else {
       setBookmarks((prev) => [
         ...prev,
-        { title: activeTab.title, url: activeTab.url, icon: "🌐" },
+        {
+          title: activeTab.title,
+          url: activeTab.url,
+          iconImg: activeTab.url.includes("youtube.com")
+            ? youtubeIcon
+            : activeTab.url.includes("github.com")
+            ? githubIcon
+            : searchGlassIcon,
+        },
       ]);
     }
   };
@@ -389,7 +412,6 @@ export default function ChromeBrowser() {
       })()
     : "";
 
-  // Filter YouTube videos for home/search
   const displayedVideos = youtubeVideos.filter((video) => {
     if (isYouTubeSearch && ytSearchTerm) {
       const q = ytSearchTerm.toLowerCase();
@@ -436,7 +458,7 @@ export default function ChromeBrowser() {
             >
               <div className="flex items-center gap-2 truncate">
                 {isYt ? (
-                  <span className="text-red-600 text-xs">▶</span>
+                  <img src={youtubeIcon} alt="" className="w-4 h-3 object-contain shrink-0" />
                 ) : (
                   <img src={CHROME_ICON} alt="" className="w-3.5 h-3.5 shrink-0" />
                 )}
@@ -446,7 +468,9 @@ export default function ChromeBrowser() {
                 onClick={(e) => closeTab(tab.id, e)}
                 className="w-4 h-4 ml-1 rounded-full hover:bg-neutral-300 flex items-center justify-center text-neutral-500 hover:text-black opacity-70 group-hover:opacity-100"
               >
-                ✕
+                <svg className="w-2 h-2" viewBox="0 0 10 10" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M1 1L9 9M9 1L1 9" />
+                </svg>
               </button>
             </div>
           );
@@ -458,7 +482,9 @@ export default function ChromeBrowser() {
           className="w-7 h-7 mb-1 rounded-full hover:bg-[#CDD1D6] flex items-center justify-center text-neutral-600 font-bold text-base transition-colors cursor-pointer"
           title="New Tab"
         >
-          +
+          <svg className="w-3 h-3" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M6 1v10M1 6h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
         </button>
       </div>
 
@@ -471,7 +497,9 @@ export default function ChromeBrowser() {
             className="w-7 h-7 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
             title="Back"
           >
-            ←
+            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M11 2L5 8l6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
           <button
             onClick={goForward}
@@ -479,7 +507,9 @@ export default function ChromeBrowser() {
             className="w-7 h-7 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
             title="Forward"
           >
-            →
+            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M5 2l6 6-6 6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
           <button
             onClick={reload}
@@ -488,21 +518,26 @@ export default function ChromeBrowser() {
             }`}
             title="Reload"
           >
-            ⟳
+            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M13.6 8A5.6 5.6 0 118 2.4c2.2 0 4.1 1.2 5 3M14 2v4h-4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
           <button
             onClick={goHome}
             className="w-7 h-7 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 cursor-pointer"
             title="Home"
           >
-            ⌂
+            <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 2.5L2 7.5V14h4v-4h4v4h4V7.5L8 2.5z" />
+            </svg>
           </button>
         </div>
 
         {/* Omnibox / Address Bar */}
         <form onSubmit={handleAddressSubmit} className="flex-1">
           <div className="h-8 bg-[#F1F3F4] hover:bg-[#E8EAED] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#1A73E8] rounded-full px-3 flex items-center gap-2 border border-transparent focus-within:border-transparent transition-all">
-            <span className="text-xs text-emerald-600">🔒</span>
+            {/* Real SSL Lock Icon */}
+            <img src={lockSslIcon} alt="SSL" className="w-3.5 h-3.5 object-contain" />
             <input
               type="text"
               value={inputUrl}
@@ -513,12 +548,14 @@ export default function ChromeBrowser() {
             <button
               type="button"
               onClick={toggleBookmark}
-              className={`text-xs cursor-pointer ${
+              className={`text-xs cursor-pointer flex items-center ${
                 isBookmarked ? "text-amber-500" : "text-neutral-400 hover:text-neutral-600"
               }`}
               title="Bookmark this tab"
             >
-              ★
+              <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.2">
+                <path d="M8 1.5l2 4 4.5.7-3.2 3.2.8 4.6L8 11.8 3.9 14l.8-4.6L1.5 6.2l4.5-.7 2-4z" />
+              </svg>
             </button>
           </div>
         </form>
@@ -530,14 +567,18 @@ export default function ChromeBrowser() {
           </div>
           <button
             onClick={() => alert("Google Chrome v126.0 (Windows XP Edition)")}
-            className="w-7 h-7 rounded-full hover:bg-neutral-100 flex items-center justify-center font-black tracking-widest cursor-pointer"
+            className="w-7 h-7 rounded-full hover:bg-neutral-100 flex items-center justify-center cursor-pointer text-neutral-700"
           >
-            &#8942;
+            <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+              <circle cx="8" cy="3" r="1.5" />
+              <circle cx="8" cy="8" r="1.5" />
+              <circle cx="8" cy="13" r="1.5" />
+            </svg>
           </button>
         </div>
       </div>
 
-      {/* 3. Bookmarks Bar */}
+      {/* 3. Bookmarks Bar with Real Icons */}
       <div className="h-7 bg-white border-b border-[#E8EAED] px-3 flex items-center gap-3 overflow-x-auto text-[11px] text-[#3C4043]">
         {bookmarks.map((bm, index) => (
           <button
@@ -545,7 +586,13 @@ export default function ChromeBrowser() {
             onClick={() => navigateTo(bm.url)}
             className="flex items-center gap-1.5 px-2 py-0.5 rounded hover:bg-[#F1F3F4] whitespace-nowrap transition-colors cursor-pointer"
           >
-            <span>{bm.icon || "🌐"}</span>
+            {bm.iconImg ? (
+              <img src={bm.iconImg} alt="" className="w-3.5 h-3.5 object-contain" />
+            ) : bm.iconSvg ? (
+              bm.iconSvg
+            ) : (
+              <img src={CHROME_ICON} alt="" className="w-3.5 h-3.5 object-contain" />
+            )}
             <span>{bm.title}</span>
           </button>
         ))}
@@ -564,14 +611,12 @@ export default function ChromeBrowser() {
           <div className="min-h-full flex flex-col bg-[#0F0F0F] text-white select-auto font-sans">
             {/* YouTube Navbar */}
             <div className="h-14 border-b border-[#272727] px-4 flex items-center justify-between sticky top-0 bg-[#0F0F0F] z-10 select-none">
-              {/* Logo */}
+              {/* Real YouTube Logo from assets */}
               <div
                 onClick={() => navigateTo("https://www.youtube.com")}
-                className="flex items-center gap-1 cursor-pointer"
+                className="flex items-center gap-2 cursor-pointer"
               >
-                <div className="w-7 h-5 rounded-md bg-red-600 flex items-center justify-center text-white text-xs font-black">
-                  ▶
-                </div>
+                <img src={youtubeIcon} alt="YouTube" className="h-5 object-contain" />
                 <span className="font-['Clash_Display',sans-serif] font-bold text-lg tracking-tighter">
                   YouTube
                 </span>
@@ -606,13 +651,17 @@ export default function ChromeBrowser() {
                   className="h-9 px-5 bg-[#222222] hover:bg-[#272727] border border-l-0 border-[#303030] rounded-r-full text-neutral-300 flex items-center justify-center cursor-pointer"
                   title="Search"
                 >
-                  🔍
+                  <img src={searchGlassIcon} alt="Search" className="w-3.5 h-3.5 object-contain brightness-90" />
                 </button>
               </form>
 
               {/* Profile icon */}
               <div className="flex items-center gap-3 text-sm">
-                <span className="cursor-pointer text-lg">🔔</span>
+                <button className="text-neutral-300 hover:text-white cursor-pointer" title="Notifications">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+                  </svg>
+                </button>
                 <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs">
                   S
                 </div>
@@ -624,7 +673,6 @@ export default function ChromeBrowser() {
               <div className="p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto w-full">
                 {/* Main Player & Details */}
                 <div className="lg:col-span-2 space-y-4">
-                  {/* Real Embedded YouTube Video Iframe */}
                   <div className="w-full aspect-video rounded-xl overflow-hidden bg-black shadow-2xl border border-neutral-800">
                     <iframe
                       src={`https://www.youtube-nocookie.com/embed/${currentVideo.id}?autoplay=1&rel=0`}
@@ -635,7 +683,6 @@ export default function ChromeBrowser() {
                     />
                   </div>
 
-                  {/* Video Title */}
                   <h1 className="text-xl font-bold leading-snug">{currentVideo.title}</h1>
 
                   {/* Channel & Action Buttons */}
@@ -660,7 +707,7 @@ export default function ChromeBrowser() {
                       </button>
                     </div>
 
-                    {/* Actions: Like, Share, Download */}
+                    {/* Actions: Like, Share, Download (Clean SVG icons) */}
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => {
@@ -671,21 +718,27 @@ export default function ChromeBrowser() {
                           hasLiked ? "bg-[#3F3F3F] text-blue-400" : "bg-[#272727] hover:bg-[#3F3F3F]"
                         }`}
                       >
-                        <span>👍</span>
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                        </svg>
                         <span>{likesCount.toLocaleString()}</span>
                       </button>
                       <button
                         onClick={() => alert("Link copied to clipboard!")}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-[#272727] hover:bg-[#3F3F3F] rounded-full text-xs font-semibold cursor-pointer"
                       >
-                        <span>🔗</span>
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z" />
+                        </svg>
                         <span>Share</span>
                       </button>
                       <button
                         onClick={() => alert("Video downloaded to C:\\Downloads!")}
                         className="flex items-center gap-1.5 px-3 py-1.5 bg-[#272727] hover:bg-[#3F3F3F] rounded-full text-xs font-semibold cursor-pointer"
                       >
-                        <span>⬇️</span>
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                        </svg>
                         <span>Download</span>
                       </button>
                     </div>
@@ -707,7 +760,6 @@ export default function ChromeBrowser() {
                   <div className="pt-4 space-y-4">
                     <h3 className="font-bold text-base">{comments.length + 42} Comments</h3>
 
-                    {/* Post Comment Input */}
                     <form onSubmit={handlePostComment} className="flex gap-3 items-start">
                       <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs shrink-0">
                         S
@@ -731,7 +783,7 @@ export default function ChromeBrowser() {
                             </button>
                             <button
                               type="submit"
-                              className="px-3 py-1 bg-[#3EA6FF] text-black text-xs font-bold rounded-full"
+                              className="px-3 py-1 bg-[#3EA6FF] text-black text-xs font-bold rounded-full cursor-pointer"
                             >
                               Comment
                             </button>
@@ -740,7 +792,6 @@ export default function ChromeBrowser() {
                       </div>
                     </form>
 
-                    {/* Comments List */}
                     <div className="space-y-3 pt-2">
                       {comments.map((comm, idx) => (
                         <div key={idx} className="flex gap-3 text-xs">
@@ -756,8 +807,12 @@ export default function ChromeBrowser() {
                             </div>
                             <p className="text-neutral-200 mt-0.5">{comm}</p>
                             <div className="flex items-center gap-3 mt-1 text-[11px] text-neutral-400">
-                              <span className="cursor-pointer hover:text-white">👍 14</span>
-                              <span className="cursor-pointer hover:text-white">👎</span>
+                              <span className="cursor-pointer hover:text-white flex items-center gap-1">
+                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
+                                </svg>
+                                14
+                              </span>
                               <span className="cursor-pointer hover:text-white">Reply</span>
                             </div>
                           </div>
@@ -808,7 +863,6 @@ export default function ChromeBrowser() {
             ) : (
               /* YOUTUBE HOME / SEARCH FEED */
               <div className="p-4 md:p-6 space-y-4 max-w-7xl mx-auto w-full">
-                {/* Category Chips */}
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
                   {["All", "Coding", "Lo-Fi", "Retro", "Music"].map((cat) => (
                     <button
@@ -831,7 +885,6 @@ export default function ChromeBrowser() {
                   </div>
                 )}
 
-                {/* Video Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-2">
                   {displayedVideos.map((video) => (
                     <div
@@ -839,7 +892,6 @@ export default function ChromeBrowser() {
                       onClick={() => navigateTo(`https://www.youtube.com/watch?v=${video.id}`)}
                       className="flex flex-col gap-2 group cursor-pointer"
                     >
-                      {/* Thumbnail */}
                       <div className="relative aspect-video rounded-xl overflow-hidden bg-neutral-900 shadow-md">
                         <img
                           src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
@@ -851,7 +903,6 @@ export default function ChromeBrowser() {
                         </span>
                       </div>
 
-                      {/* Info */}
                       <div className="flex gap-2.5 pt-1">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center font-bold text-xs shrink-0">
                           {video.channel.slice(0, 1)}
@@ -898,7 +949,7 @@ export default function ChromeBrowser() {
               className="w-full max-w-xl mb-6"
             >
               <div className="h-12 bg-white rounded-full px-5 flex items-center gap-3 shadow-[0_1px_6px_rgba(32,33,36,0.28)] hover:shadow-[0_2px_8px_rgba(32,33,36,0.38)] transition-shadow">
-                <span className="text-neutral-400">🔍</span>
+                <img src={searchGlassIcon} alt="Search" className="w-4 h-4 object-contain" />
                 <input
                   type="text"
                   value={homeSearchQuery}
@@ -916,21 +967,21 @@ export default function ChromeBrowser() {
               </div>
             </form>
 
-            {/* Quick Speed Dial Shortcuts */}
+            {/* Quick Speed Dial Shortcuts (Real icons from assets!) */}
             <div className="grid grid-cols-4 gap-4 max-w-md w-full">
               {[
-                { title: "YouTube", url: "https://www.youtube.com", icon: "▶️" },
-                { title: "GitHub", url: "https://github.com/shivam7-gif", icon: "🐙" },
-                { title: "Portfolio", url: "https://shivam-portfolio.local", icon: "💻" },
-                { title: "Wikipedia", url: "https://en.m.wikipedia.org", icon: "📖" },
+                { title: "YouTube", url: "https://www.youtube.com", icon: youtubeIcon },
+                { title: "GitHub", url: "https://github.com/shivam7-gif", icon: githubIcon },
+                { title: "Portfolio", url: "https://shivam-portfolio.local", icon: portfolioIcon },
+                { title: "React", url: "https://react.dev", icon: reactIcon },
               ].map((shortcut, i) => (
                 <button
                   key={i}
                   onClick={() => navigateTo(shortcut.url)}
                   className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-neutral-100 transition-colors cursor-pointer"
                 >
-                  <div className="w-12 h-12 rounded-full bg-[#F1F3F4] flex items-center justify-center text-xl shadow-inner">
-                    {shortcut.icon}
+                  <div className="w-12 h-12 rounded-full bg-[#F1F3F4] flex items-center justify-center p-2.5 shadow-inner">
+                    <img src={shortcut.icon} alt={shortcut.title} className="w-full h-full object-contain" />
                   </div>
                   <span className="text-xs text-[#3C4043] font-medium">{shortcut.title}</span>
                 </button>
@@ -944,7 +995,6 @@ export default function ChromeBrowser() {
         {/* ------------------------------------------------------------- */}
         {isGoogleSearch && (
           <div className="p-6 max-w-4xl space-y-6">
-            {/* Search Header Tabs: All, Videos, Images, News */}
             <div className="border-b border-neutral-200 pb-3 flex items-center justify-between">
               <span className="text-xs text-neutral-500">
                 About 2,340,000 results (0.19 seconds) for <strong>{searchQuery}</strong>
@@ -966,10 +1016,12 @@ export default function ChromeBrowser() {
               </div>
             </div>
 
-            {/* TAB: VIDEOS SEARCH */}
             {searchTab === "Videos" ? (
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-neutral-700">Video results from YouTube</h3>
+                <h3 className="text-sm font-bold text-neutral-700 flex items-center gap-2">
+                  <img src={youtubeIcon} alt="YouTube" className="h-4 object-contain" />
+                  <span>Video results from YouTube</span>
+                </h3>
                 <div className="space-y-3">
                   {youtubeVideos.map((video) => (
                     <div
@@ -1005,7 +1057,6 @@ export default function ChromeBrowser() {
                 </div>
               </div>
             ) : searchTab === "Images" ? (
-              /* TAB: IMAGES SEARCH */
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                 {youtubeVideos.map((v) => (
                   <div
@@ -1022,13 +1073,13 @@ export default function ChromeBrowser() {
                 ))}
               </div>
             ) : (
-              /* TAB: ALL (Standard Search Results + Video Carousel) */
               <div className="space-y-6">
                 {/* Embedded Video Carousel directly in Google Search */}
                 <div className="p-3 bg-[#F8F9FA] rounded-xl border border-neutral-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-neutral-700 flex items-center gap-1.5">
-                      <span className="text-red-600">▶</span> Top Videos for {searchQuery}
+                      <img src={youtubeIcon} alt="YouTube" className="h-3.5 object-contain" />
+                      <span>Top Videos for {searchQuery}</span>
                     </span>
                     <button
                       onClick={() => setSearchTab("Videos")}
@@ -1084,9 +1135,10 @@ export default function ChromeBrowser() {
                     <span className="text-xs text-neutral-500">https://www.youtube.com</span>
                     <h3
                       onClick={() => navigateTo("https://www.youtube.com")}
-                      className="text-lg font-medium text-[#1A0DAB] hover:underline cursor-pointer"
+                      className="text-lg font-medium text-[#1A0DAB] hover:underline cursor-pointer flex items-center gap-1.5"
                     >
-                      YouTube - Watch, Stream, and Listen
+                      <img src={youtubeIcon} alt="" className="h-3.5 object-contain" />
+                      <span>YouTube - Watch, Stream, and Listen</span>
                     </h3>
                     <p className="text-xs text-[#4D5156] leading-relaxed">
                       Enjoy the videos and music you love, upload original content, and share it all with
@@ -1098,9 +1150,10 @@ export default function ChromeBrowser() {
                     <span className="text-xs text-neutral-500">https://github.com/shivam7-gif</span>
                     <h3
                       onClick={() => navigateTo("https://github.com/shivam7-gif")}
-                      className="text-lg font-medium text-[#1A0DAB] hover:underline cursor-pointer"
+                      className="text-lg font-medium text-[#1A0DAB] hover:underline cursor-pointer flex items-center gap-1.5"
                     >
-                      shivam7-gif (Shivam) • GitHub
+                      <img src={githubIcon} alt="" className="w-4 h-4 object-contain" />
+                      <span>shivam7-gif (Shivam) • GitHub</span>
                     </h3>
                     <p className="text-xs text-[#4D5156] leading-relaxed">
                       Open source repositories, frontend engineering experiments, and web architecture
@@ -1144,7 +1197,9 @@ export default function ChromeBrowser() {
               />
             ) : activeTab.url.includes("shivam-portfolio.local") ? (
               <div className="p-8 max-w-2xl mx-auto space-y-4 text-center">
-                <div className="text-4xl">🚀</div>
+                <div className="w-16 h-16 mx-auto rounded-xl bg-neutral-100 flex items-center justify-center p-3 border border-neutral-200 shadow-sm">
+                  <img src={portfolioIcon} alt="Portfolio" className="w-full h-full object-contain" />
+                </div>
                 <h2 className="text-2xl font-bold text-neutral-800">Shivam's Portfolio Web View</h2>
                 <p className="text-sm text-neutral-600">
                   Welcome to Shivam's web portfolio! You are browsing from inside the simulated Windows XP
@@ -1153,9 +1208,10 @@ export default function ChromeBrowser() {
                 <div className="flex justify-center gap-3 pt-4">
                   <button
                     onClick={() => navigateTo("https://www.youtube.com")}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md text-xs font-semibold hover:bg-red-700 cursor-pointer"
+                    className="px-4 py-2 bg-red-600 text-white rounded-md text-xs font-semibold hover:bg-red-700 cursor-pointer flex items-center gap-1.5"
                   >
-                    Open YouTube
+                    <img src={youtubeIcon} alt="" className="h-3.5 object-contain" />
+                    <span>Open YouTube</span>
                   </button>
                   <button
                     onClick={() => navigateTo("https://www.google.com")}
@@ -1167,8 +1223,12 @@ export default function ChromeBrowser() {
               </div>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center text-3xl">
-                  🌐
+                <div className="w-16 h-16 rounded-full bg-[#E8F0FE] text-[#1A73E8] flex items-center justify-center p-4">
+                  <svg className="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+                  </svg>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-neutral-800">{activeTab.title}</h3>

@@ -65,8 +65,8 @@ interface ContextMenuState {
 export default function Window() {
   const navigate = useNavigate();
 
-  // Phase states
-  const [booting, setBooting] = useState(true);
+  // Startup state
+  const [startupStage, setStartupStage] = useState<"video" | "desktop">("video");
   const [shuttingDown, setShuttingDown] = useState(false);
   const [showTurnOffDialog, setShowTurnOffDialog] = useState(false);
 
@@ -137,18 +137,20 @@ export default function Window() {
     }
   };
 
-  const handleFinishBoot = () => {
-    setBooting(false);
+  const handleFinishStartup = () => {
+    setStartupStage("desktop");
     playStartupSound();
   };
 
-  // Boot screen timer
+  // Boot timer: after 2.2s of boot video, transition to desktop & chime
   useEffect(() => {
-    const timer = setTimeout(() => {
-      handleFinishBoot();
-    }, 2400);
-    return () => clearTimeout(timer);
-  }, []);
+    if (startupStage === "video") {
+      const timer = setTimeout(() => {
+        handleFinishStartup();
+      }, 2200);
+      return () => clearTimeout(timer);
+    }
+  }, [startupStage]);
 
   // Live system clock updater
   useEffect(() => {
@@ -402,13 +404,13 @@ export default function Window() {
     }, 2800);
   };
 
-  // Boot sequence screen
-  if (booting) {
+  // Startup video boot screen
+  if (startupStage === "video") {
     return (
       <div
         className="fixed inset-0 bg-black flex flex-col items-center justify-center select-none z-50 cursor-pointer"
-        onClick={handleFinishBoot}
-        title="Click to start Windows XP"
+        onClick={handleFinishStartup}
+        title="Click to continue"
       >
         <img
           src={bootGif}
@@ -417,7 +419,7 @@ export default function Window() {
         />
         <div className="absolute bottom-6 flex flex-col items-center gap-1.5">
           <p className="text-neutral-400 text-xs tracking-wider animate-pulse font-sans">
-            Click anywhere or press any key to enter Windows XP
+            Click anywhere or press any key to skip
           </p>
         </div>
       </div>
@@ -482,9 +484,11 @@ export default function Window() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-[4px] bg-gradient-to-b from-[#d9534f] to-[#b52b27] hover:from-[#e25d59] hover:to-[#c63430] border border-[#7e1c18] text-white text-xs font-bold shadow-md active:translate-y-0.5 transition-all cursor-pointer"
             title="Turn Off Computer"
           >
-            <span className="w-3.5 h-3.5 rounded-full bg-white/20 flex items-center justify-center text-[10px]">
-              ✕
-            </span>
+            <div className="w-3.5 h-3.5 rounded-full bg-white/20 flex items-center justify-center">
+              <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M7 1h2v6H7V1zm4.7 1.8l-1.4 1.4A4.95 4.95 0 0113 7c0 2.8-2.2 5-5 5s-5-2.2-5-5c0-1.4.6-2.7 1.6-3.6L3.2 2C1.9 3.2 1 5 1 7c0 3.9 3.1 7 7 7s7-3.1 7-7c0-2-.9-3.8-2.3-5.2z" />
+              </svg>
+            </div>
             <span>Turn Off</span>
           </button>
         </div>
@@ -822,7 +826,9 @@ HIGHLIGHTS
                         className="py-2 px-1 flex items-center justify-between hover:bg-[#EEF3FA] cursor-pointer rounded"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="text-neutral-400 text-[10px]">&#9658;</span>
+                          <svg className="w-2.5 h-2.5 text-neutral-500 fill-current shrink-0" viewBox="0 0 10 10">
+                            <polygon points="2,1 9,5 2,9" />
+                          </svg>
                           <span className="font-semibold text-neutral-800">{track.title}</span>
                           <span className="text-[10px] text-neutral-500">({track.artist})</span>
                         </div>
@@ -1020,11 +1026,13 @@ HIGHLIGHTS
                 setStartMenuOpen(false);
                 navigate("/");
               }}
-              className="flex items-center gap-1.5 hover:brightness-110 active:scale-95"
+              className="flex items-center gap-1.5 hover:brightness-110 active:scale-95 cursor-pointer"
             >
-              <span className="w-5 h-5 rounded bg-[#e8a317] flex items-center justify-center text-xs shadow-sm">
-                &#8592;
-              </span>
+              <div className="w-5 h-5 rounded bg-[#e8a317] flex items-center justify-center shadow-sm">
+                <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M11 1a2 2 0 00-2 2v2H2v6h2v-2h2v2h2v-2h1v3h2v-3h1v3h2V5a4 4 0 00-4-4zm0 2a1 1 0 110 2 1 1 0 010-2z" />
+                </svg>
+              </div>
               <span>Log Off</span>
             </button>
             <button
@@ -1032,11 +1040,13 @@ HIGHLIGHTS
                 setStartMenuOpen(false);
                 setShowTurnOffDialog(true);
               }}
-              className="flex items-center gap-1.5 hover:brightness-110 active:scale-95"
+              className="flex items-center gap-1.5 hover:brightness-110 active:scale-95 cursor-pointer"
             >
-              <span className="w-5 h-5 rounded bg-[#d9534f] flex items-center justify-center text-xs shadow-sm">
-                &#10005;
-              </span>
+              <div className="w-5 h-5 rounded bg-[#d9534f] flex items-center justify-center shadow-sm">
+                <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M7 1h2v6H7V1zm4.7 1.8l-1.4 1.4A4.95 4.95 0 0113 7c0 2.8-2.2 5-5 5s-5-2.2-5-5c0-1.4.6-2.7 1.6-3.6L3.2 2C1.9 3.2 1 5 1 7c0 3.9 3.1 7 7 7s7-3.1 7-7c0-2-.9-3.8-2.3-5.2z" />
+                </svg>
+              </div>
               <span>Turn Off Computer</span>
             </button>
           </div>
@@ -1051,11 +1061,21 @@ HIGHLIGHTS
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-[360px] bg-[#003399] rounded-lg shadow-2xl border-2 border-[#0055ea] overflow-hidden text-white font-sans"
+            className="w-[370px] bg-[#003399] rounded-lg shadow-2xl border-2 border-[#0055ea] overflow-hidden text-white font-sans"
           >
             {/* Header */}
             <div className="h-12 bg-gradient-to-r from-[#003399] to-[#0055ea] px-4 flex items-center justify-between border-b border-[#002266]">
-              <span className="font-bold text-sm">Turn off computer</span>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 flex items-center justify-center shrink-0">
+                  <svg viewBox="0 0 32 32" className="w-4 h-4 drop-shadow">
+                    <path fill="#f25022" d="M1 1h14v14H1z"/>
+                    <path fill="#7fba00" d="M17 1h14v14H17z"/>
+                    <path fill="#00a4ef" d="M1 17h14v14H1z"/>
+                    <path fill="#ffb900" d="M17 17h14v14H17z"/>
+                  </svg>
+                </div>
+                <span className="font-bold text-sm">Turn off computer</span>
+              </div>
               <span className="font-['Clash_Display',sans-serif] text-xs font-bold italic tracking-wider text-[#8eb9f5]">
                 Windows<sup className="text-[9px]">XP</sup>
               </span>
@@ -1072,7 +1092,9 @@ HIGHLIGHTS
                 className="flex flex-col items-center gap-2 group cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#fcd34d] to-[#d97706] border-2 border-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                  <span className="text-white text-xs font-black">&#9209;</span>
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.3 2a10 10 0 0 0-.19 14 9.92 9.92 0 0 0 7.9 3.82 10.1 10.1 0 0 0 1.94-.19 10.05 10.05 0 0 1-9.65-17.63z" />
+                  </svg>
                 </div>
                 <span className="text-xs font-semibold group-hover:underline">Stand By</span>
               </button>
@@ -1083,7 +1105,9 @@ HIGHLIGHTS
                 className="flex flex-col items-center gap-2 group cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#ef4444] to-[#b91c1c] border-2 border-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform animate-pulse">
-                  <span className="text-white text-sm font-black">&#10005;</span>
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11 2h2v10h-2V2zm6.36 2.64l-1.42 1.42A7.92 7.92 0 0 1 20 12a8 8 0 1 1-16 0c0-2.45 1.1-4.64 2.84-6.14L5.42 4.44A9.95 9.95 0 0 0 2 12a10 10 0 1 0 20 0c0-3.04-1.37-5.76-3.52-7.56z" />
+                  </svg>
                 </div>
                 <span className="text-xs font-bold text-red-200 group-hover:underline">Turn Off</span>
               </button>
@@ -1092,12 +1116,14 @@ HIGHLIGHTS
               <button
                 onClick={() => {
                   setShowTurnOffDialog(false);
-                  setBooting(true);
+                  setStartupStage("video");
                 }}
                 className="flex flex-col items-center gap-2 group cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#22c55e] to-[#15803d] border-2 border-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                  <span className="text-white text-sm font-black">&#8635;</span>
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l6.73-5.19" />
+                  </svg>
                 </div>
                 <span className="text-xs font-semibold group-hover:underline">Restart</span>
               </button>
@@ -1145,13 +1171,19 @@ HIGHLIGHTS
           {/* Start Button */}
           <button
             onClick={() => setStartMenuOpen((prev) => !prev)}
-            className={`h-full px-3 rounded-r-lg bg-gradient-to-b from-[#388e3c] via-[#4caf50] to-[#2e7d32] hover:brightness-110 active:brightness-95 border-r border-[#1b5e20] text-white text-xs font-black italic flex items-center gap-1.5 shadow-md ${
+            className={`h-full px-3 rounded-r-lg bg-gradient-to-b from-[#388e3c] via-[#4caf50] to-[#2e7d32] hover:brightness-110 active:brightness-95 border-r border-[#1b5e20] text-white text-xs font-black italic flex items-center gap-1.5 shadow-md cursor-pointer ${
               startMenuOpen ? "brightness-90 shadow-inner" : ""
             }`}
           >
-            <span className="w-3.5 h-3.5 rounded-full bg-white/20 flex items-center justify-center text-[10px]">
-              &#9632;
-            </span>
+            {/* Authentic Windows XP 4-Color Flag Logo */}
+            <div className="w-4 h-4 flex items-center justify-center shrink-0 drop-shadow">
+              <svg viewBox="0 0 32 32" className="w-3.5 h-3.5">
+                <path fill="#f25022" d="M1 1h14v14H1z"/>
+                <path fill="#7fba00" d="M17 1h14v14H17z"/>
+                <path fill="#00a4ef" d="M1 17h14v14H1z"/>
+                <path fill="#ffb900" d="M17 17h14v14H17z"/>
+              </svg>
+            </div>
             <span>start</span>
           </button>
 
@@ -1187,10 +1219,12 @@ HIGHLIGHTS
         <div className="h-7 px-2.5 bg-[#0c59cc] border border-[#083e91] rounded-sm flex items-center gap-2.5 text-white text-xs font-semibold shadow-inner">
           <button
             onClick={() => setVolumeSliderOpen((prev) => !prev)}
-            className="hover:scale-110 transition-transform cursor-pointer"
+            className="hover:scale-110 transition-transform cursor-pointer flex items-center text-white/90"
             title={`Volume: ${volume}%`}
           >
-            <span className="text-xs text-white/90">&#128266;</span>
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
           </button>
           <span
             className="text-[11px] font-medium tracking-tight cursor-default"

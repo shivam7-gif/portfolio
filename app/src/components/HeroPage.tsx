@@ -60,7 +60,7 @@ const HeroPage = () => {
   };
 
   return (
-    <div className="relative w-full bg-[#F4F1EA] text-[#151515] font-sans">
+    <div className="relative w-full bg-[#FFFFF] text-[#151515] font-sans">
       <img
         src={isPosing ? poseImage : catWorking}
         alt="Cat mascot — click to change pose"
