@@ -94,8 +94,8 @@ const contactRows = [
   },
   {
     label: "Codolio",
-    value: "codolio.com/ShivamRawat",
-    href: "",
+    value: "codolio.com/profile/ShivamRawat",
+    href: "https://codolio.com/profile/ShivamRawat",
   },
   { label: "Based in", value: "Delhi, India" },
 ];
