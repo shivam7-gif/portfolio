@@ -62,11 +62,30 @@ interface ContextMenuState {
   targetId?: string;
 }
 
+const xpProjects = [
+  {
+    title: "StackPilot AI",
+    description:
+      "Six LangGraph agents take a feature request to tested, CI/CD-deployed code, backed by a Neo4j and Pinecone memory layer.",
+    tech: "LangGraph • FastAPI • Next.js",
+    url: "", // live demo or GitHub URL
+  },
+  {
+    title: "Karma",
+    description:
+      "An MCP-powered assistant that orchestrates 18+ tools across code intelligence, knowledge retrieval and shopping.",
+    tech: "TypeScript • Node.js • MCP",
+    url: "", // live demo or GitHub URL
+  },
+];
+
 export default function Window() {
   const navigate = useNavigate();
 
   // Startup state
-  const [startupStage, setStartupStage] = useState<"video" | "desktop">("video");
+  const [startupStage, setStartupStage] = useState<"video" | "desktop">(
+    "video"
+  );
   const [shuttingDown, setShuttingDown] = useState(false);
   const [showTurnOffDialog, setShowTurnOffDialog] = useState(false);
 
@@ -76,7 +95,9 @@ export default function Window() {
   const [selectionBox, setSelectionBox] = useState<SelectionBox | null>(null);
 
   // Windows state
-  const [openWindows, setOpenWindows] = useState<Record<string, WindowState>>({});
+  const [openWindows, setOpenWindows] = useState<Record<string, WindowState>>(
+    {}
+  );
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
 
   // UI elements
@@ -155,7 +176,12 @@ export default function Window() {
   // Live system clock updater
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+      setTime(
+        new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     }, 15000);
     return () => clearInterval(interval);
   }, []);
@@ -176,8 +202,14 @@ export default function Window() {
           setIcons((prev) =>
             prev.map((item) => {
               if (item.id === drag.id) {
-                const newX = Math.max(0, Math.min(window.innerWidth - 80, drag.initialX + dx));
-                const newY = Math.max(0, Math.min(window.innerHeight - 100, drag.initialY + dy));
+                const newX = Math.max(
+                  0,
+                  Math.min(window.innerWidth - 80, drag.initialX + dx)
+                );
+                const newY = Math.max(
+                  0,
+                  Math.min(window.innerHeight - 100, drag.initialY + dy)
+                );
                 return { ...item, x: newX, y: newY };
               }
               return item;
@@ -191,8 +223,14 @@ export default function Window() {
               ...prev,
               [drag.id]: {
                 ...win,
-                x: Math.max(0, Math.min(window.innerWidth - 120, drag.initialX + dx)),
-                y: Math.max(0, Math.min(window.innerHeight - 80, drag.initialY + dy)),
+                x: Math.max(
+                  0,
+                  Math.min(window.innerWidth - 120, drag.initialX + dx)
+                ),
+                y: Math.max(
+                  0,
+                  Math.min(window.innerHeight - 80, drag.initialY + dy)
+                ),
               },
             };
           });
@@ -204,8 +242,14 @@ export default function Window() {
               ...prev,
               [drag.id]: {
                 ...win,
-                width: Math.max(340, Math.min(window.innerWidth - win.x, drag.initialW + dx)),
-                height: Math.max(220, Math.min(window.innerHeight - 36 - win.y, drag.initialH + dy)),
+                width: Math.max(
+                  340,
+                  Math.min(window.innerWidth - win.x, drag.initialW + dx)
+                ),
+                height: Math.max(
+                  220,
+                  Math.min(window.innerHeight - 36 - win.y, drag.initialH + dy)
+                ),
               },
             };
           });
@@ -215,7 +259,9 @@ export default function Window() {
 
       // 2. Marquee selection box on desktop
       if (selectionBox) {
-        setSelectionBox((prev) => (prev ? { ...prev, currentX: e.clientX, currentY: e.clientY } : null));
+        setSelectionBox((prev) =>
+          prev ? { ...prev, currentX: e.clientX, currentY: e.clientY } : null
+        );
 
         // Update selected icons based on intersection
         const x1 = Math.min(selectionBox.startX, e.clientX);
@@ -227,7 +273,9 @@ export default function Window() {
           .filter((icon) => {
             const iconRight = icon.x + 75;
             const iconBottom = icon.y + 75;
-            return icon.x < x2 && iconRight > x1 && icon.y < y2 && iconBottom > y1;
+            return (
+              icon.x < x2 && iconRight > x1 && icon.y < y2 && iconBottom > y1
+            );
           })
           .map((i) => i.id);
 
@@ -267,8 +315,14 @@ export default function Window() {
 
       const count = Object.keys(prev).length;
       const offset = (count % 6) * 32;
-      const defaultX = Math.min(window.innerWidth - 560, Math.max(40, 120 + offset));
-      const defaultY = Math.min(window.innerHeight - 440, Math.max(30, 50 + offset));
+      const defaultX = Math.min(
+        window.innerWidth - 560,
+        Math.max(40, 120 + offset)
+      );
+      const defaultY = Math.min(
+        window.innerHeight - 440,
+        Math.max(30, 50 + offset)
+      );
 
       const isChrome = item.id === "chrome";
       const defaultWidth = isChrome
@@ -433,9 +487,12 @@ export default function Window() {
         <div className="flex items-center gap-3">
           <div className="flex flex-col items-start">
             <span className="font-['Clash_Display',sans-serif] text-2xl font-black italic tracking-wide">
-              Microsoft<sup className="text-xs">&reg;</sup> Windows<sup className="text-xs">XP</sup>
+              Microsoft<sup className="text-xs">&reg;</sup> Windows
+              <sup className="text-xs">XP</sup>
             </span>
-            <span className="text-sm font-semibold text-[#8eb9f5] mt-1">Windows is shutting down...</span>
+            <span className="text-sm font-semibold text-[#8eb9f5] mt-1">
+              Windows is shutting down...
+            </span>
           </div>
         </div>
         <div className="mt-8 flex gap-1.5">
@@ -485,7 +542,11 @@ export default function Window() {
             title="Turn Off Computer"
           >
             <div className="w-3.5 h-3.5 rounded-full bg-white/20 flex items-center justify-center">
-              <svg className="w-2.5 h-2.5" viewBox="0 0 16 16" fill="currentColor">
+              <svg
+                className="w-2.5 h-2.5"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
                 <path d="M7 1h2v6H7V1zm4.7 1.8l-1.4 1.4A4.95 4.95 0 0113 7c0 2.8-2.2 5-5 5s-5-2.2-5-5c0-1.4.6-2.7 1.6-3.6L3.2 2C1.9 3.2 1 5 1 7c0 3.9 3.1 7 7 7s7-3.1 7-7c0-2-.9-3.8-2.3-5.2z" />
               </svg>
             </div>
@@ -509,7 +570,11 @@ export default function Window() {
             onMouseDown={(e) => startIconDrag(item.id, e)}
             onClick={(e) => {
               e.stopPropagation();
-              if (dragTargetRef.current?.type === "icon" && dragTargetRef.current.hasMoved) return;
+              if (
+                dragTargetRef.current?.type === "icon" &&
+                dragTargetRef.current.hasMoved
+              )
+                return;
               setSelectedIconIds([item.id]);
             }}
             onDoubleClick={(e) => {
@@ -520,7 +585,12 @@ export default function Window() {
               e.stopPropagation();
               e.preventDefault();
               setSelectedIconIds([item.id]);
-              setContextMenu({ x: e.clientX, y: e.clientY, type: "icon", targetId: item.id });
+              setContextMenu({
+                x: e.clientX,
+                y: e.clientY,
+                type: "icon",
+                targetId: item.id,
+              });
             }}
             className={`w-[76px] p-1 flex flex-col items-center gap-1 rounded cursor-pointer transition-shadow z-10 ${
               isSelected
@@ -596,7 +666,11 @@ export default function Window() {
               }`}
             >
               <div className="flex items-center gap-2 text-white text-xs font-bold drop-shadow-sm truncate">
-                <img src={win.icon} alt="" className="w-4 h-4 shrink-0 pointer-events-none" />
+                <img
+                  src={win.icon}
+                  alt=""
+                  className="w-4 h-4 shrink-0 pointer-events-none"
+                />
                 <span className="truncate">{win.title}</span>
               </div>
 
@@ -610,8 +684,20 @@ export default function Window() {
                   aria-label="Minimize"
                   className="w-5 h-5 rounded-[3px] bg-gradient-to-b from-[#5f9df7] to-[#2f6fd6] hover:brightness-110 active:brightness-90 border border-[#1149b3] text-white flex items-center justify-center shadow-inner cursor-pointer"
                 >
-                  <svg className="w-2 h-2 pointer-events-none" viewBox="0 0 10 10" fill="none">
-                    <line x1="1" y1="8" x2="9" y2="8" stroke="white" strokeWidth="2" strokeLinecap="square" />
+                  <svg
+                    className="w-2 h-2 pointer-events-none"
+                    viewBox="0 0 10 10"
+                    fill="none"
+                  >
+                    <line
+                      x1="1"
+                      y1="8"
+                      x2="9"
+                      y2="8"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="square"
+                    />
                   </svg>
                 </button>
                 <button
@@ -620,13 +706,40 @@ export default function Window() {
                   className="w-5 h-5 rounded-[3px] bg-gradient-to-b from-[#5f9df7] to-[#2f6fd6] hover:brightness-110 active:brightness-90 border border-[#1149b3] text-white flex items-center justify-center shadow-inner cursor-pointer"
                 >
                   {win.isMaximized ? (
-                    <svg className="w-2.5 h-2.5 pointer-events-none" viewBox="0 0 10 10" fill="none">
-                      <path d="M3.5 3V1.5h5v5H7" stroke="white" strokeWidth="1.2" />
-                      <rect x="1.5" y="3.5" width="5.5" height="5" fill="#2f6fd6" stroke="white" strokeWidth="1.2" />
+                    <svg
+                      className="w-2.5 h-2.5 pointer-events-none"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                    >
+                      <path
+                        d="M3.5 3V1.5h5v5H7"
+                        stroke="white"
+                        strokeWidth="1.2"
+                      />
+                      <rect
+                        x="1.5"
+                        y="3.5"
+                        width="5.5"
+                        height="5"
+                        fill="#2f6fd6"
+                        stroke="white"
+                        strokeWidth="1.2"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-2.5 h-2.5 pointer-events-none" viewBox="0 0 10 10" fill="none">
-                      <rect x="1.5" y="1.5" width="7" height="7" stroke="white" strokeWidth="1.4" />
+                    <svg
+                      className="w-2.5 h-2.5 pointer-events-none"
+                      viewBox="0 0 10 10"
+                      fill="none"
+                    >
+                      <rect
+                        x="1.5"
+                        y="1.5"
+                        width="7"
+                        height="7"
+                        stroke="white"
+                        strokeWidth="1.4"
+                      />
                     </svg>
                   )}
                 </button>
@@ -635,8 +748,17 @@ export default function Window() {
                   aria-label="Close"
                   className="w-5 h-5 rounded-[3px] bg-gradient-to-b from-[#e8533c] to-[#ba2712] hover:brightness-110 active:brightness-90 border border-[#7a180a] text-white flex items-center justify-center shadow-inner cursor-pointer"
                 >
-                  <svg className="w-2.5 h-2.5 pointer-events-none" viewBox="0 0 10 10" fill="none">
-                    <path d="M2 2L8 8M8 2L2 8" stroke="white" strokeWidth="1.8" strokeLinecap="square" />
+                  <svg
+                    className="w-2.5 h-2.5 pointer-events-none"
+                    viewBox="0 0 10 10"
+                    fill="none"
+                  >
+                    <path
+                      d="M2 2L8 8M8 2L2 8"
+                      stroke="white"
+                      strokeWidth="1.8"
+                      strokeLinecap="square"
+                    />
                   </svg>
                 </button>
               </div>
@@ -650,136 +772,159 @@ export default function Window() {
             ) : (
               <div className="flex-1 bg-[#ECE9D8] text-[#111] overflow-auto p-4 flex flex-col font-sans text-sm relative">
                 {win.id === "about" && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 bg-white p-3 rounded border border-[#7F9DB9] shadow-inner">
-                    <img
-                      src={pointing}
-                      alt="Avatar"
-                      className="w-20 h-24 object-cover rounded border border-[#999] shadow-sm"
-                    />
-                    <div>
-                      <h2 className="text-base font-bold text-[#0C3278]">Shivam</h2>
-                      <p className="text-xs text-neutral-600">Software Engineer & Creative Developer</p>
-                      <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-medium">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Available for opportunities
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 bg-white p-3 rounded border border-[#7F9DB9] shadow-inner">
+                      <img
+                        src={pointing}
+                        alt="Avatar"
+                        className="w-20 h-24 object-cover rounded border border-[#999] shadow-sm"
+                      />
+                      <div>
+                        <h2 className="text-base font-bold text-[#0C3278]">
+                          Shivam
+                        </h2>
+                        <p className="text-xs text-neutral-600">
+                          Software Engineer & Creative Developer
+                        </p>
+                        <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-medium">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                          Available for opportunities
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="bg-white p-3 rounded border border-[#7F9DB9] shadow-inner space-y-2">
-                    <h3 className="font-bold text-xs uppercase text-neutral-500 tracking-wider">
-                      Technical Skills
-                    </h3>
-                    <div className="flex flex-wrap gap-1.5">
-                      {[
-                        "React",
-                        "TypeScript",
-                        "JavaScript",
-                        "Tailwind CSS",
-                        "Node.js",
-                        "Vite",
-                        "REST APIs",
-                        "Git",
-                      ].map((skill) => (
-                        <span
-                          key={skill}
-                          className="px-2 py-0.5 bg-[#EEF3FA] text-[#1b4fa0] border border-[#B2C6E6] rounded text-xs font-semibold"
+                    <div className="bg-white p-3 rounded border border-[#7F9DB9] shadow-inner space-y-2">
+                      <h3 className="font-bold text-xs uppercase text-neutral-500 tracking-wider">
+                        Technical Skills
+                      </h3>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          "React",
+                          "TypeScript",
+                          "JavaScript",
+                          "Tailwind CSS",
+                          "Node.js",
+                          "Vite",
+                          "REST APIs",
+                          "Git",
+                        ].map((skill) => (
+                          <span
+                            key={skill}
+                            className="px-2 py-0.5 bg-[#EEF3FA] text-[#1b4fa0] border border-[#B2C6E6] rounded text-xs font-semibold"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-neutral-700 leading-relaxed bg-[#f8f7f0] p-2.5 rounded border border-[#d6d2c4]">
+                      Passionate about building responsive, accessible, and
+                      delightful interactive web applications with modern
+                      technologies and retro charm.
+                    </p>
+                  </div>
+                )}
+                {win.id === "projects" && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#C0B9A8]">
+                      <span className="text-xs font-bold text-[#1149b3]">
+                        C:\Projects\Directory
+                      </span>
+                      <span className="text-[11px] text-neutral-500">
+                        {xpProjects.length} items found
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {xpProjects.map((p) => (
+                        <div
+                          key={p.title}
+                          className="bg-white p-3 rounded border border-[#7F9DB9] shadow-sm flex flex-col justify-between hover:border-[#1149b3] transition-colors"
                         >
-                          {skill}
-                        </span>
+                          <div>
+                            <h4 className="font-bold text-[#0C3278] text-sm">
+                              {p.title}
+                            </h4>
+                            <p className="text-xs text-neutral-600 mt-1">
+                              {p.description}
+                            </p>
+                          </div>
+                          <div className="mt-3 pt-2 border-t border-neutral-100 flex items-center justify-between text-xs font-semibold">
+                            <span className="text-neutral-500 text-[10px]">
+                              {p.tech}
+                            </span>
+                            {p.url && (
+                              <a
+                                href={p.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[#1149b3] hover:underline cursor-pointer"
+                              >
+                                Explore &rarr;
+                              </a>
+                            )}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
+                )}
 
-                  <p className="text-xs text-neutral-700 leading-relaxed bg-[#f8f7f0] p-2.5 rounded border border-[#d6d2c4]">
-                    Passionate about building responsive, accessible, and delightful interactive web
-                    applications with modern technologies and retro charm.
-                  </p>
-                </div>
-              )}
-
-              {win.id === "projects" && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#C0B9A8]">
-                    <span className="text-xs font-bold text-[#1149b3]">C:\Projects\Directory</span>
-                    <span className="text-[11px] text-neutral-500">2 items found</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="bg-white p-3 rounded border border-[#7F9DB9] shadow-sm flex flex-col justify-between hover:border-[#1149b3] transition-colors">
-                      <div>
-                        <h4 className="font-bold text-[#0C3278] text-sm">Portfolio OS</h4>
-                        <p className="text-xs text-neutral-600 mt-1">
-                          A nostalgic interactive Windows XP desktop experience built inside a modern React +
-                          Tailwind application.
-                        </p>
+                {win.id === "contact" && (
+                  <div className="space-y-3">
+                    <div className="bg-white p-3 rounded border border-[#7F9DB9] space-y-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="w-14 text-neutral-500 font-bold">
+                          To:
+                        </span>
+                        <span className="text-[#1149b3] font-semibold">
+                          shivamsrawat7@gmail.com
+                        </span>
                       </div>
-                      <div className="mt-3 pt-2 border-t border-neutral-100 flex items-center justify-between text-xs font-semibold">
-                        <span className="text-neutral-500 text-[10px]">React • Tailwind</span>
-                        <span className="text-[#1149b3] hover:underline cursor-pointer">Explore &rarr;</span>
+                      <div className="flex items-center gap-2 border-t border-neutral-100 pt-2">
+                        <span className="w-14 text-neutral-500 font-bold">
+                          Subject:
+                        </span>
+                        <input
+                          type="text"
+                          placeholder="Say hello or discuss an opportunity..."
+                          className="flex-1 px-2 py-1 border border-[#7F9DB9] rounded bg-[#FFF] outline-none focus:border-[#1149b3]"
+                        />
                       </div>
-                    </div>
-
-                    <div className="bg-white p-3 rounded border border-[#7F9DB9] shadow-sm flex flex-col justify-between hover:border-[#1149b3] transition-colors">
-                      <div>
-                        <h4 className="font-bold text-[#0C3278] text-sm">Web Application Platform</h4>
-                        <p className="text-xs text-neutral-600 mt-1">
-                          High performance full-stack application featuring responsive layouts, custom cursor
-                          interactions, and modern routing.
-                        </p>
+                      <div className="flex flex-col gap-1 border-t border-neutral-100 pt-2">
+                        <span className="text-neutral-500 font-bold">
+                          Message:
+                        </span>
+                        <textarea
+                          rows={4}
+                          placeholder="Write your note here..."
+                          className="w-full px-2 py-1 border border-[#7F9DB9] rounded bg-[#FFF] outline-none focus:border-[#1149b3] resize-none"
+                        />
                       </div>
-                      <div className="mt-3 pt-2 border-t border-neutral-100 flex items-center justify-between text-xs font-semibold">
-                        <span className="text-neutral-500 text-[10px]">TypeScript • Vite</span>
-                        <span className="text-[#1149b3] hover:underline cursor-pointer">Explore &rarr;</span>
+                      <div className="flex justify-end pt-1">
+                        <button
+                          onClick={() =>
+                            alert(
+                              "Thank you! Please email me directly at shivamsrawat7@gmail.com"
+                            )
+                          }
+                          className="px-4 py-1 rounded bg-gradient-to-b from-[#5ec95e] to-[#2f9c2f] hover:brightness-105 border border-[#1c6e1c] text-white text-xs font-bold shadow-sm"
+                        >
+                          Send Note
+                        </button>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {win.id === "contact" && (
-                <div className="space-y-3">
-                  <div className="bg-white p-3 rounded border border-[#7F9DB9] space-y-2 text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="w-14 text-neutral-500 font-bold">To:</span>
-                      <span className="text-[#1149b3] font-semibold">shivamsrawat7@gmail.com</span>
-                    </div>
-                    <div className="flex items-center gap-2 border-t border-neutral-100 pt-2">
-                      <span className="w-14 text-neutral-500 font-bold">Subject:</span>
-                      <input
-                        type="text"
-                        placeholder="Say hello or discuss an opportunity..."
-                        className="flex-1 px-2 py-1 border border-[#7F9DB9] rounded bg-[#FFF] outline-none focus:border-[#1149b3]"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1 border-t border-neutral-100 pt-2">
-                      <span className="text-neutral-500 font-bold">Message:</span>
-                      <textarea
-                        rows={4}
-                        placeholder="Write your note here..."
-                        className="w-full px-2 py-1 border border-[#7F9DB9] rounded bg-[#FFF] outline-none focus:border-[#1149b3] resize-none"
-                      />
-                    </div>
-                    <div className="flex justify-end pt-1">
-                      <button
-                        onClick={() => alert("Thank you! Please email me directly at shivamsrawat7@gmail.com")}
-                        className="px-4 py-1 rounded bg-gradient-to-b from-[#5ec95e] to-[#2f9c2f] hover:brightness-105 border border-[#1c6e1c] text-white text-xs font-bold shadow-sm"
-                      >
-                        Send Note
-                      </button>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {win.id === "resume" && (
-                <div className="flex flex-col h-full bg-white border border-[#7F9DB9] p-3 font-mono text-xs overflow-auto">
-                  <div className="text-neutral-400 text-[10px] pb-2 border-b border-neutral-200 mb-2">
-                    Notepad - Resume.txt
-                  </div>
-                  <pre className="whitespace-pre-wrap text-neutral-800 leading-relaxed font-sans text-xs">
-                    {`SHIVAM
+                {win.id === "resume" && (
+                  <div className="flex flex-col h-full bg-white border border-[#7F9DB9] p-3 font-mono text-xs overflow-auto">
+                    <div className="text-neutral-400 text-[10px] pb-2 border-b border-neutral-200 mb-2">
+                      Notepad - Resume.txt
+                    </div>
+                    <pre className="whitespace-pre-wrap text-neutral-800 leading-relaxed font-sans text-xs">
+                      {`SHIVAM
 Software Engineer
 
 ----------------------------------------
@@ -795,78 +940,115 @@ HIGHLIGHTS
 • Architected modular component designs for interactive portfolio platforms.
 • Built authentic Windows XP retro interface simulation within React.
 • Focused on performance, smooth animations, and clean UI engineering.`}
-                  </pre>
-                </div>
-              )}
-
-              {win.id === "playlist" && (
-                <div className="space-y-3">
-                  <div className="bg-[#1A1A1A] p-3 rounded-t border border-[#333] text-white text-xs flex items-center justify-between">
-                    <span className="font-bold text-[#5ec95e]">XP Media Player 9.0</span>
-                    <span className="text-[10px] text-neutral-400">Audio Ready</span>
+                    </pre>
                   </div>
-                  <div className="bg-white p-2 rounded border border-[#7F9DB9] divide-y divide-neutral-100 text-xs">
-                    {[
-                      { title: "Windows XP Startup Sound", duration: "0:04", artist: "Microsoft" },
-                      { title: "Windows XP Shutdown Sound", duration: "0:04", artist: "Microsoft" },
-                      { title: "Lofi Retro Coding Beats", duration: "2:45", artist: "Synthwave" },
-                      { title: "Bliss Hill Reverie", duration: "3:12", artist: "Ambient" },
-                    ].map((track, i) => (
-                      <div
-                        key={i}
-                        onClick={() => {
-                          if (i === 0) {
-                            playStartupSound();
-                          } else if (i === 1) {
-                            const audio = new Audio(soundShutdown);
-                            audio.volume = volume / 100;
-                            audio.play().catch(() => {});
-                          }
-                        }}
-                        className="py-2 px-1 flex items-center justify-between hover:bg-[#EEF3FA] cursor-pointer rounded"
-                      >
-                        <div className="flex items-center gap-2">
-                          <svg className="w-2.5 h-2.5 text-neutral-500 fill-current shrink-0" viewBox="0 0 10 10">
-                            <polygon points="2,1 9,5 2,9" />
-                          </svg>
-                          <span className="font-semibold text-neutral-800">{track.title}</span>
-                          <span className="text-[10px] text-neutral-500">({track.artist})</span>
+                )}
+
+                {win.id === "playlist" && (
+                  <div className="space-y-3">
+                    <div className="bg-[#1A1A1A] p-3 rounded-t border border-[#333] text-white text-xs flex items-center justify-between">
+                      <span className="font-bold text-[#5ec95e]">
+                        XP Media Player 9.0
+                      </span>
+                      <span className="text-[10px] text-neutral-400">
+                        Audio Ready
+                      </span>
+                    </div>
+                    <div className="bg-white p-2 rounded border border-[#7F9DB9] divide-y divide-neutral-100 text-xs">
+                      {[
+                        {
+                          title: "Windows XP Startup Sound",
+                          duration: "0:04",
+                          artist: "Microsoft",
+                        },
+                        {
+                          title: "Windows XP Shutdown Sound",
+                          duration: "0:04",
+                          artist: "Microsoft",
+                        },
+                        {
+                          title: "Lofi Retro Coding Beats",
+                          duration: "2:45",
+                          artist: "Synthwave",
+                        },
+                        {
+                          title: "Bliss Hill Reverie",
+                          duration: "3:12",
+                          artist: "Ambient",
+                        },
+                      ].map((track, i) => (
+                        <div
+                          key={i}
+                          onClick={() => {
+                            if (i === 0) {
+                              playStartupSound();
+                            } else if (i === 1) {
+                              const audio = new Audio(soundShutdown);
+                              audio.volume = volume / 100;
+                              audio.play().catch(() => {});
+                            }
+                          }}
+                          className="py-2 px-1 flex items-center justify-between hover:bg-[#EEF3FA] cursor-pointer rounded"
+                        >
+                          <div className="flex items-center gap-2">
+                            <svg
+                              className="w-2.5 h-2.5 text-neutral-500 fill-current shrink-0"
+                              viewBox="0 0 10 10"
+                            >
+                              <polygon points="2,1 9,5 2,9" />
+                            </svg>
+                            <span className="font-semibold text-neutral-800">
+                              {track.title}
+                            </span>
+                            <span className="text-[10px] text-neutral-500">
+                              ({track.artist})
+                            </span>
+                          </div>
+                          <span className="text-neutral-500 text-[11px] font-mono">
+                            {track.duration}
+                          </span>
                         </div>
-                        <span className="text-neutral-500 text-[11px] font-mono">{track.duration}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {win.id === "recycle" && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-[#C0B9A8]">
-                    <span className="text-xs font-bold text-neutral-700">Recycle Bin Items</span>
-                    <button
-                      onClick={() => alert("Recycle bin emptied!")}
-                      className="px-2 py-0.5 bg-[#EDE8D6] hover:bg-white border border-[#999] rounded text-[11px] font-semibold"
-                    >
-                      Empty Bin
-                    </button>
+                {win.id === "recycle" && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#C0B9A8]">
+                      <span className="text-xs font-bold text-neutral-700">
+                        Recycle Bin Items
+                      </span>
+                      <button
+                        onClick={() => alert("Recycle bin emptied!")}
+                        className="px-2 py-0.5 bg-[#EDE8D6] hover:bg-white border border-[#999] rounded text-[11px] font-semibold"
+                      >
+                        Empty Bin
+                      </button>
+                    </div>
+                    <div className="space-y-1.5 text-xs text-neutral-700">
+                      <div className="p-2 bg-white rounded border border-[#DDD] flex items-center justify-between">
+                        <span>Sleep_Schedule_2026.sys</span>
+                        <span className="text-neutral-400 text-[11px]">
+                          0 KB
+                        </span>
+                      </div>
+                      <div className="p-2 bg-white rounded border border-[#DDD] flex items-center justify-between">
+                        <span>Bugs_Fixed_Final_v2.dll</span>
+                        <span className="text-neutral-400 text-[11px]">
+                          42 KB
+                        </span>
+                      </div>
+                      <div className="p-2 bg-white rounded border border-[#DDD] flex items-center justify-between">
+                        <span>Internet_Explorer_6.exe</span>
+                        <span className="text-neutral-400 text-[11px]">
+                          1,337 KB
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1.5 text-xs text-neutral-700">
-                    <div className="p-2 bg-white rounded border border-[#DDD] flex items-center justify-between">
-                      <span>Sleep_Schedule_2026.sys</span>
-                      <span className="text-neutral-400 text-[11px]">0 KB</span>
-                    </div>
-                    <div className="p-2 bg-white rounded border border-[#DDD] flex items-center justify-between">
-                      <span>Bugs_Fixed_Final_v2.dll</span>
-                      <span className="text-neutral-400 text-[11px]">42 KB</span>
-                    </div>
-                    <div className="p-2 bg-white rounded border border-[#DDD] flex items-center justify-between">
-                      <span>Internet_Explorer_6.exe</span>
-                      <span className="text-neutral-400 text-[11px]">1,337 KB</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
             )}
 
             {/* Resize Grip (only when not maximized) */}
@@ -961,7 +1143,9 @@ HIGHLIGHTS
               alt="User profile"
               className="w-11 h-11 rounded-sm object-cover border-2 border-white shadow-md"
             />
-            <span className="text-white font-bold text-base tracking-wide drop-shadow-md">Shivam</span>
+            <span className="text-white font-bold text-base tracking-wide drop-shadow-md">
+              Shivam
+            </span>
           </div>
 
           {/* Two-Column Start Menu Content */}
@@ -1029,7 +1213,11 @@ HIGHLIGHTS
               className="flex items-center gap-1.5 hover:brightness-110 active:scale-95 cursor-pointer"
             >
               <div className="w-5 h-5 rounded bg-[#e8a317] flex items-center justify-center shadow-sm">
-                <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
+                <svg
+                  className="w-3 h-3 text-white"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                >
                   <path d="M11 1a2 2 0 00-2 2v2H2v6h2v-2h2v2h2v-2h1v3h2v-3h1v3h2V5a4 4 0 00-4-4zm0 2a1 1 0 110 2 1 1 0 010-2z" />
                 </svg>
               </div>
@@ -1043,7 +1231,11 @@ HIGHLIGHTS
               className="flex items-center gap-1.5 hover:brightness-110 active:scale-95 cursor-pointer"
             >
               <div className="w-5 h-5 rounded bg-[#d9534f] flex items-center justify-center shadow-sm">
-                <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="currentColor">
+                <svg
+                  className="w-3 h-3 text-white"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                >
                   <path d="M7 1h2v6H7V1zm4.7 1.8l-1.4 1.4A4.95 4.95 0 0113 7c0 2.8-2.2 5-5 5s-5-2.2-5-5c0-1.4.6-2.7 1.6-3.6L3.2 2C1.9 3.2 1 5 1 7c0 3.9 3.1 7 7 7s7-3.1 7-7c0-2-.9-3.8-2.3-5.2z" />
                 </svg>
               </div>
@@ -1068,10 +1260,10 @@ HIGHLIGHTS
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 flex items-center justify-center shrink-0">
                   <svg viewBox="0 0 32 32" className="w-4 h-4 drop-shadow">
-                    <path fill="#f25022" d="M1 1h14v14H1z"/>
-                    <path fill="#7fba00" d="M17 1h14v14H17z"/>
-                    <path fill="#00a4ef" d="M1 17h14v14H1z"/>
-                    <path fill="#ffb900" d="M17 17h14v14H17z"/>
+                    <path fill="#f25022" d="M1 1h14v14H1z" />
+                    <path fill="#7fba00" d="M17 1h14v14H17z" />
+                    <path fill="#00a4ef" d="M1 17h14v14H1z" />
+                    <path fill="#ffb900" d="M17 17h14v14H17z" />
                   </svg>
                 </div>
                 <span className="font-bold text-sm">Turn off computer</span>
@@ -1092,11 +1284,17 @@ HIGHLIGHTS
                 className="flex flex-col items-center gap-2 group cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#fcd34d] to-[#d97706] border-2 border-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M12.3 2a10 10 0 0 0-.19 14 9.92 9.92 0 0 0 7.9 3.82 10.1 10.1 0 0 0 1.94-.19 10.05 10.05 0 0 1-9.65-17.63z" />
                   </svg>
                 </div>
-                <span className="text-xs font-semibold group-hover:underline">Stand By</span>
+                <span className="text-xs font-semibold group-hover:underline">
+                  Stand By
+                </span>
               </button>
 
               {/* Turn Off */}
@@ -1105,11 +1303,17 @@ HIGHLIGHTS
                 className="flex flex-col items-center gap-2 group cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#ef4444] to-[#b91c1c] border-2 border-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform animate-pulse">
-                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M11 2h2v10h-2V2zm6.36 2.64l-1.42 1.42A7.92 7.92 0 0 1 20 12a8 8 0 1 1-16 0c0-2.45 1.1-4.64 2.84-6.14L5.42 4.44A9.95 9.95 0 0 0 2 12a10 10 0 1 0 20 0c0-3.04-1.37-5.76-3.52-7.56z" />
                   </svg>
                 </div>
-                <span className="text-xs font-bold text-red-200 group-hover:underline">Turn Off</span>
+                <span className="text-xs font-bold text-red-200 group-hover:underline">
+                  Turn Off
+                </span>
               </button>
 
               {/* Restart */}
@@ -1121,11 +1325,20 @@ HIGHLIGHTS
                 className="flex flex-col items-center gap-2 group cursor-pointer"
               >
                 <div className="w-10 h-10 rounded-full bg-gradient-to-b from-[#22c55e] to-[#15803d] border-2 border-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
                     <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l6.73-5.19" />
                   </svg>
                 </div>
-                <span className="text-xs font-semibold group-hover:underline">Restart</span>
+                <span className="text-xs font-semibold group-hover:underline">
+                  Restart
+                </span>
               </button>
             </div>
 
@@ -1157,7 +1370,9 @@ HIGHLIGHTS
             onChange={(e) => setVolume(Number(e.target.value))}
             className="h-24 [writing-mode:bt-lr] accent-[#245edb] cursor-pointer"
           />
-          <span className="text-[10px] font-mono text-neutral-500">{volume}%</span>
+          <span className="text-[10px] font-mono text-neutral-500">
+            {volume}%
+          </span>
         </div>
       )}
 
@@ -1178,10 +1393,10 @@ HIGHLIGHTS
             {/* Authentic Windows XP 4-Color Flag Logo */}
             <div className="w-4 h-4 flex items-center justify-center shrink-0 drop-shadow">
               <svg viewBox="0 0 32 32" className="w-3.5 h-3.5">
-                <path fill="#f25022" d="M1 1h14v14H1z"/>
-                <path fill="#7fba00" d="M17 1h14v14H17z"/>
-                <path fill="#00a4ef" d="M1 17h14v14H1z"/>
-                <path fill="#ffb900" d="M17 17h14v14H17z"/>
+                <path fill="#f25022" d="M1 1h14v14H1z" />
+                <path fill="#7fba00" d="M17 1h14v14H17z" />
+                <path fill="#00a4ef" d="M1 17h14v14H1z" />
+                <path fill="#ffb900" d="M17 17h14v14H17z" />
               </svg>
             </div>
             <span>start</span>
@@ -1207,7 +1422,11 @@ HIGHLIGHTS
                       : "bg-[#3d83ee]/85 border-[#1f5ec2] text-white/95 hover:bg-[#3d83ee]"
                   }`}
                 >
-                  <img src={win.icon} alt="" className="w-3.5 h-3.5 shrink-0 pointer-events-none" />
+                  <img
+                    src={win.icon}
+                    alt=""
+                    className="w-3.5 h-3.5 shrink-0 pointer-events-none"
+                  />
                   <span className="truncate text-[11px]">{win.title}</span>
                 </button>
               );
@@ -1222,8 +1441,12 @@ HIGHLIGHTS
             className="hover:scale-110 transition-transform cursor-pointer flex items-center text-white/90"
             title={`Volume: ${volume}%`}
           >
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            <svg
+              className="w-3.5 h-3.5"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
             </svg>
           </button>
           <span

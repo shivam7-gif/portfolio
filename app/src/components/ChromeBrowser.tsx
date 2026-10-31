@@ -354,8 +354,8 @@ export default function ChromeBrowser() {
           iconImg: activeTab.url.includes("youtube.com")
             ? youtubeIcon
             : activeTab.url.includes("github.com")
-            ? githubIcon
-            : searchGlassIcon,
+              ? githubIcon
+              : searchGlassIcon,
         },
       ]);
     }
@@ -367,12 +367,12 @@ export default function ChromeBrowser() {
   const isGoogleSearch = activeTab.url.includes("google.com/search");
   const searchQuery = isGoogleSearch
     ? (() => {
-        try {
-          return new URL(activeTab.url).searchParams.get("q") || "";
-        } catch {
-          return "";
-        }
-      })()
+      try {
+        return new URL(activeTab.url).searchParams.get("q") || "";
+      } catch {
+        return "";
+      }
+    })()
     : "";
 
   const isYouTube = activeTab.url.includes("youtube.com");
@@ -381,35 +381,35 @@ export default function ChromeBrowser() {
 
   const currentVideoId = isYouTubeWatch
     ? (() => {
-        try {
-          return new URL(activeTab.url).searchParams.get("v") || "jfKfPfyJRdk";
-        } catch {
-          return "jfKfPfyJRdk";
-        }
-      })()
+      try {
+        return new URL(activeTab.url).searchParams.get("v") || "jfKfPfyJRdk";
+      } catch {
+        return "jfKfPfyJRdk";
+      }
+    })()
     : null;
 
   const currentVideo = currentVideoId
     ? youtubeVideos.find((v) => v.id === currentVideoId) || {
-        id: currentVideoId,
-        title: "Selected YouTube Video",
-        channel: "YouTube Creator",
-        views: "1.2M views",
-        timeAgo: "Recently uploaded",
-        duration: "10:00",
-        category: "Coding" as const,
-        description: "Enjoy watching this video directly inside the Windows XP Google Chrome browser.",
-      }
+      id: currentVideoId,
+      title: "Selected YouTube Video",
+      channel: "YouTube Creator",
+      views: "1.2M views",
+      timeAgo: "Recently uploaded",
+      duration: "10:00",
+      category: "Coding" as const,
+      description: "Enjoy watching this video directly inside the Windows XP Google Chrome browser.",
+    }
     : null;
 
   const ytSearchTerm = isYouTubeSearch
     ? (() => {
-        try {
-          return new URL(activeTab.url).searchParams.get("search_query") || "";
-        } catch {
-          return "";
-        }
-      })()
+      try {
+        return new URL(activeTab.url).searchParams.get("search_query") || "";
+      } catch {
+        return "";
+      }
+    })()
     : "";
 
   const displayedVideos = youtubeVideos.filter((video) => {
@@ -450,11 +450,10 @@ export default function ChromeBrowser() {
                 setActiveTabId(tab.id);
                 setInputUrl(tab.url);
               }}
-              className={`group relative h-9 max-w-[210px] min-w-[130px] px-3 rounded-t-lg flex items-center justify-between text-xs font-medium cursor-pointer transition-colors ${
-                isActive
+              className={`group relative h-9 max-w-[210px] min-w-[130px] px-3 rounded-t-lg flex items-center justify-between text-xs font-medium cursor-pointer transition-colors ${isActive
                   ? "bg-white text-[#1A73E8] shadow-sm font-semibold"
                   : "bg-[#DEE1E6] hover:bg-[#E8EAED] text-[#5F6368]"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-2 truncate">
                 {isYt ? (
@@ -513,9 +512,8 @@ export default function ChromeBrowser() {
           </button>
           <button
             onClick={reload}
-            className={`w-7 h-7 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 cursor-pointer ${
-              isLoading ? "animate-spin" : ""
-            }`}
+            className={`w-7 h-7 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 cursor-pointer ${isLoading ? "animate-spin" : ""
+              }`}
             title="Reload"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -548,9 +546,8 @@ export default function ChromeBrowser() {
             <button
               type="button"
               onClick={toggleBookmark}
-              className={`text-xs cursor-pointer flex items-center ${
-                isBookmarked ? "text-amber-500" : "text-neutral-400 hover:text-neutral-600"
-              }`}
+              className={`text-xs cursor-pointer flex items-center ${isBookmarked ? "text-amber-500" : "text-neutral-400 hover:text-neutral-600"
+                }`}
               title="Bookmark this tab"
             >
               <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.2">
@@ -697,11 +694,10 @@ export default function ChromeBrowser() {
                       </div>
                       <button
                         onClick={() => setIsSubscribed((p) => !p)}
-                        className={`ml-3 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                          isSubscribed
+                        className={`ml-3 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${isSubscribed
                             ? "bg-[#272727] text-white hover:bg-[#3f3f3f]"
                             : "bg-white text-black hover:bg-neutral-200"
-                        }`}
+                          }`}
                       >
                         {isSubscribed ? "Subscribed ✓" : "Subscribe"}
                       </button>
@@ -714,9 +710,8 @@ export default function ChromeBrowser() {
                           setHasLiked((p) => !p);
                           setLikesCount((prev) => (hasLiked ? prev - 1 : prev + 1));
                         }}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer ${
-                          hasLiked ? "bg-[#3F3F3F] text-blue-400" : "bg-[#272727] hover:bg-[#3F3F3F]"
-                        }`}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer ${hasLiked ? "bg-[#3F3F3F] text-blue-400" : "bg-[#272727] hover:bg-[#3F3F3F]"
+                          }`}
                       >
                         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z" />
@@ -868,11 +863,10 @@ export default function ChromeBrowser() {
                     <button
                       key={cat}
                       onClick={() => setYtCategory(cat)}
-                      className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer transition-colors ${
-                        ytCategory === cat
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap cursor-pointer transition-colors ${ytCategory === cat
                           ? "bg-white text-black"
                           : "bg-[#272727] text-neutral-300 hover:bg-[#3F3F3F]"
-                      }`}
+                        }`}
                     >
                       {cat}
                     </button>
@@ -1004,11 +998,10 @@ export default function ChromeBrowser() {
                   <button
                     key={tab}
                     onClick={() => setSearchTab(tab)}
-                    className={`pb-1 cursor-pointer transition-colors ${
-                      searchTab === tab
+                    className={`pb-1 cursor-pointer transition-colors ${searchTab === tab
                         ? "text-[#1A73E8] border-b-2 border-[#1A73E8]"
                         : "text-neutral-600 hover:text-neutral-900"
-                    }`}
+                      }`}
                   >
                     {tab}
                   </button>
