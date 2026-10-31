@@ -28,8 +28,7 @@ import karma1 from "../assets/karma/karma-1.png";
 import karma2 from "../assets/karma/karma-2.png";
 
 import stackpilot1 from "../assets/stackpilot/stackpilot-1.png";
-import stackpilot2 from "../assets/stackpilot/stackpilot-2.png"; 
-
+import stackpilot2 from "../assets/stackpilot/stackpilot-2.png";
 
 const photos = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
 
@@ -89,7 +88,7 @@ const contactRows = [
   },
   {
     label: "GitHub",
-    value: "github.com/shivam7-gif",
+    value: "codolio.com/profile/ShivamRawat",
     href: "https://github.com/shivam7-gif",
   },
   {
