@@ -131,12 +131,7 @@ const HeroPage = () => {
 
   return (
     <div className="relative w-full bg-[#F5F1EC] text-[#151515] font-sans">
-      <img
-        src={isPosing ? poseImage : catWorking}
-        alt="Cat mascot — click to change pose"
-        onClick={toggleCat}
-        className="fixed left-0 bottom-0 z-40 w-[140px] md:w-[220px] cursor-pointer select-none"
-      />
+      
 
       <Navbar />
 
